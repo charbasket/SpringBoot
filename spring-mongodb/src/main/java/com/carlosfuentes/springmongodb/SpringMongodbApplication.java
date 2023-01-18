@@ -31,21 +31,31 @@ public class SpringMongodbApplication {
             Student student = new Student("Carlos", "Fuentes", email, Gender.MALE, adress,
                     List.of("Computer Science", "Math"), BigDecimal.TEN, LocalDateTime.now());
 
-            Query query = new Query();
-            query.addCriteria(Criteria.where("email").is(email));
-
-            List<Student> students = mongoTemplate.find(query, Student.class);
-            if (students.size() > 1) {
-                throw new IllegalStateException("Found many students with email" + email);
-            }
-            if (students.isEmpty()) {
+            //UsingMongoTemplateAndQuery(rRepository, mongoTemplate, email, student);
+            rRepository.findStudentByEmail(email).ifPresentOrElse( s-> {
+                System.out.println(s + " already exist");
+            }, ()-> {
                 System.out.println("Inserting student" + student);
                 rRepository.save(student);
-            } else {
-                System.out.println(student + " already exist");
-            }
+            });
         };
 
+    }
+
+    private static void UsingMongoTemplateAndQuery(StudentRepository rRepository, MongoTemplate mongoTemplate, String email, Student student) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("email").is(email));
+
+        List<Student> students = mongoTemplate.find(query, Student.class);
+        if (students.size() > 1) {
+            throw new IllegalStateException("Found many students with email" + email);
+        }
+        if (students.isEmpty()) {
+            System.out.println("Inserting student" + student);
+            rRepository.save(student);
+        } else {
+            System.out.println(student + " already exist");
+        }
     }
 
 }
