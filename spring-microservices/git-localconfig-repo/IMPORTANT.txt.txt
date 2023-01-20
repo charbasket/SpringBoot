@@ -1,6 +1,0 @@
-For the services to work this needs to be a git repository.
-But in order to push this to the main repo you have to delete the .git inside this folder.
-Once you need it to work git services, just do:
-1. Git init
-2. Git add .
-3. Git commit -m "Message"
